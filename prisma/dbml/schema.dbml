@@ -1,0 +1,471 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table accounts {
+  id String [pk]
+  user_id String [not null]
+  provider String [not null]
+  provider_account_id String [not null]
+  access_token String
+  refresh_token String
+  expires_at Int
+  token_type String
+  scope String
+  id_token String
+  created_at DateTime [default: `now()`]
+  users users [not null]
+
+  indexes {
+    (provider, provider_account_id) [unique]
+  }
+}
+
+Table bank_accounts {
+  id String [pk]
+  bank_name String [not null]
+  account_name String [not null]
+  account_number String [not null]
+  promptpay_no String
+  is_active Boolean [default: true]
+  created_at DateTime [default: `now()`]
+  updated_at DateTime [default: `now()`]
+  qr_code_url String
+}
+
+Table game_keys {
+  id String [pk]
+  product_id String [not null]
+  key_value String [not null]
+  status String [not null, default: 'available']
+  order_id String [unique]
+  assigned_at DateTime
+  created_at DateTime [default: `now()`]
+  variant_id String
+  orders orders
+  products products [not null]
+  product_variants product_variants
+}
+
+Table gifts {
+  id Int [pk, increment]
+  name String [unique, not null]
+  image_url String
+  diamonds Int [not null, default: 0]
+  trigger_type String
+  is_active Boolean [not null, default: true]
+  sort_order Int [not null, default: 0]
+  user_function_gifts user_function_gifts [not null]
+  default_for_functions product_functions [not null]
+}
+
+Table key_access_logs {
+  id String [pk]
+  user_id String
+  key_id String
+  accessed_at DateTime [default: `now()`]
+}
+
+Table orders {
+  id String [pk]
+  user_id String [not null]
+  product_id String [not null]
+  stripe_session_id String [unique]
+  stripe_payment_intent String [unique]
+  amount Decimal [not null]
+  status String [not null, default: 'pending']
+  paid_at DateTime
+  fulfilled_at DateTime
+  created_at DateTime [default: `now()`]
+  variant_id String
+  payment_method String [default: 'stripe']
+  slip_image_url String
+  slip_verified Boolean [default: false]
+  trans_ref String [unique]
+  updated_at DateTime [default: `now()`]
+  whitelisted_username String
+  whitelist_status String [default: 'pending']
+  tiktok_username String
+  activated_device_id String
+  activated_at DateTime
+  expires_at DateTime
+  is_premium_order Boolean [default: false]
+  order_type String [not null, default: 'NEW']
+  game_keys game_keys
+  products products [not null]
+  users users [not null]
+  product_variants product_variants
+  user_function_gifts user_function_gifts [not null]
+  premium_upgrades premium_upgrades [not null]
+}
+
+Table product_functions {
+  id String [pk]
+  product_id String [not null]
+  name String [not null]
+  label_th String
+  label_en String
+  image_url String
+  sort_order Int [not null, default: 0]
+  default_gift_id Int
+  default_trigger_threshold Int
+  created_at DateTime [default: `now()`]
+  products products [not null]
+  user_function_gifts user_function_gifts [not null]
+  default_gift gifts
+}
+
+Table product_gifts {
+  id String [pk]
+  product_id String [not null]
+  url String [not null]
+  filename String
+  sort_order Int [default: 0]
+  created_at DateTime [default: `now()`]
+  products products [not null]
+}
+
+Table product_images {
+  id String [pk]
+  product_id String [not null]
+  url String [not null]
+  sort_order Int [default: 0]
+  alt_text String
+  created_at DateTime [default: `now()`]
+  products products [not null]
+}
+
+Table product_presets {
+  id String [pk]
+  product_id String [not null]
+  url String [not null]
+  filename String [not null]
+  filesize Int
+  sort_order Int [default: 0]
+  created_at DateTime [default: `now()`]
+  products products [not null]
+}
+
+Table product_variants {
+  id String [pk]
+  product_id String [not null]
+  duration_type String [not null]
+  duration_days Int
+  label_th String [not null]
+  label_en String [not null]
+  price Decimal [not null]
+  is_active Boolean [default: true]
+  sort_order Int [default: 0]
+  created_at DateTime [default: `now()`]
+  updated_at DateTime [default: `now()`]
+  variant_type String [default: 'normal']
+  premium_addon_price Decimal [default: 0]
+  game_keys game_keys [not null]
+  orders orders [not null]
+  products products [not null]
+}
+
+Table products {
+  id String [pk]
+  slug String [unique, not null]
+  name_th String [not null]
+  name_en String [not null]
+  description_th String
+  description_en String
+  price Decimal [not null]
+  is_active Boolean [default: true]
+  is_featured Boolean [default: false]
+  created_at DateTime [default: `now()`]
+  updated_at DateTime [default: `now()`]
+  isLower Boolean [default: false]
+  owner_name String
+  owner_contact String
+  commission_pct Decimal [default: 0]
+  is_consignment Boolean [default: false]
+  info_page_url String
+  discord_role_id String
+  discord_guild_id String
+  youtube_url String
+  tutorial_video_url String
+  created_by_id String
+  created_by users
+  game_keys game_keys [not null]
+  orders orders [not null]
+  product_functions product_functions [not null]
+  product_gifts product_gifts [not null]
+  product_images product_images [not null]
+  product_presets product_presets [not null]
+  product_variants product_variants [not null]
+  product_consignments product_consignments [not null]
+  product_shares product_shares [not null]
+  user_whitelist_access user_whitelist_access [not null]
+  premium_upgrades premium_upgrades [not null]
+}
+
+Table partners {
+  id String [pk]
+  name String [not null]
+  contact String
+  bank_name String
+  account_number String
+  created_at DateTime [default: `now()`]
+  updated_at DateTime [default: `now()`]
+  product_shares product_shares [not null]
+}
+
+Table product_shares {
+  id String [pk]
+  product_id String [not null]
+  partner_id String [not null]
+  share_pct Decimal [not null]
+  created_at DateTime [default: `now()`]
+  products products [not null]
+  partners partners [not null]
+}
+
+Table product_consignments {
+  id String [pk]
+  product_id String [not null]
+  owner_name String [not null]
+  owner_contact String
+  payout_share Decimal [not null]
+  created_at DateTime [default: `now()`]
+  products products [not null]
+}
+
+Table user_whitelist_access {
+  id String [pk]
+  ign String [not null]
+  product_id String [not null]
+  is_premium Boolean [not null, default: false]
+  expires_at DateTime [not null]
+  updated_at DateTime [default: `now()`, not null]
+  products products [not null]
+
+  indexes {
+    (ign, product_id) [unique]
+  }
+}
+
+Table premium_upgrades {
+  id String [pk]
+  order_id String [not null]
+  user_id String [not null]
+  product_id String [not null]
+  amount Decimal [not null]
+  payment_method String [not null]
+  stripe_session_id String
+  upgraded_at DateTime [default: `now()`, not null]
+  status String [not null, default: 'paid']
+  orders orders [not null]
+  users users [not null]
+  products products [not null]
+}
+
+Table user_function_gifts {
+  id String [pk]
+  user_id String [not null]
+  order_id String [not null]
+  function_id String [not null]
+  gift_id Int [not null]
+  trigger_threshold Int
+  updated_at DateTime [default: `now()`, not null]
+  product_functions product_functions [not null]
+  gifts gifts [not null]
+  orders orders [not null]
+  users users [not null]
+
+  indexes {
+    (user_id, order_id, function_id) [unique]
+  }
+}
+
+Table users {
+  id String [pk]
+  username String [not null]
+  email String [unique]
+  role String [not null, default: 'user']
+  created_at DateTime [default: `now()`]
+  avatar String
+  accounts accounts [not null]
+  orders orders [not null]
+  user_function_gifts user_function_gifts [not null]
+  premium_upgrades premium_upgrades [not null]
+  created_products products [not null]
+  hwid String [unique]
+  lastSeen DateTime
+  nativeStatus String [not null, default: 'ACTIVE']
+  nativeExpiry DateTime
+  app_presets presets [not null]
+  user_presets user_presets [not null]
+  announcements announcements [not null]
+  created_games games [not null]
+}
+
+Table system_configs {
+  key String [pk]
+  value String [not null]
+}
+
+Table games {
+  id String [pk]
+  name String [unique, not null]
+  description String
+  createdById String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  createdBy users
+  presets presets [not null]
+}
+
+Table presets {
+  id String [pk]
+  name String [not null]
+  description String
+  isDefault Boolean [not null, default: false]
+  gameId String [not null]
+  createdById String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  game games [not null]
+  createdBy users
+  rules app_rules [not null]
+  user_presets user_presets [not null]
+
+  indexes {
+    (createdById, gameId, name) [unique]
+  }
+}
+
+Table user_presets {
+  id String [pk]
+  userId String [not null]
+  presetId String [not null]
+  isActive Boolean [not null, default: false]
+  sourcePresetId String
+  createdAt DateTime [default: `now()`, not null]
+  user users [not null]
+  preset presets [not null]
+
+  indexes {
+    (userId, presetId) [unique]
+  }
+}
+
+Table app_rules {
+  id String [pk]
+  presetId String [not null]
+  event RuleEvent [not null]
+  condition Json
+  action RuleAction [not null]
+  key String
+  sound String
+  volume Float [default: 1]
+  duration String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  preset presets [not null]
+}
+
+Table announcements {
+  id String [pk]
+  title String [not null]
+  content String [not null]
+  isActive Boolean [not null, default: true]
+  createdById String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  createdBy users
+}
+
+Enum UserRole {
+  USER
+  ADMIN
+  MODERATOR
+}
+
+Enum UserStatus {
+  ACTIVE
+  BANNED
+  SUSPENDED
+}
+
+Enum RuleEvent {
+  GIFT
+  LIKE
+  FOLLOW
+  SHARE
+  COMMENT
+}
+
+Enum RuleAction {
+  KEY_PRESS
+  RCON_COMMAND
+  SOUND_PLAY
+  WIN_COUNTER
+  SPIN_WHEEL
+}
+
+Ref: accounts.user_id > users.id [delete: Cascade]
+
+Ref: game_keys.order_id - orders.id
+
+Ref: game_keys.product_id > products.id [delete: Cascade]
+
+Ref: game_keys.variant_id > product_variants.id
+
+Ref: orders.product_id > products.id [delete: No Action]
+
+Ref: orders.user_id > users.id [delete: Cascade]
+
+Ref: orders.variant_id > product_variants.id [delete: No Action]
+
+Ref: product_functions.product_id > products.id [delete: Cascade]
+
+Ref: product_functions.default_gift_id > gifts.id
+
+Ref: product_gifts.product_id > products.id [delete: Cascade]
+
+Ref: product_images.product_id > products.id [delete: Cascade]
+
+Ref: product_presets.product_id > products.id [delete: Cascade]
+
+Ref: product_variants.product_id > products.id [delete: Cascade]
+
+Ref: products.created_by_id > users.id
+
+Ref: product_shares.product_id > products.id [delete: Cascade]
+
+Ref: product_shares.partner_id > partners.id [delete: Cascade]
+
+Ref: product_consignments.product_id > products.id [delete: Cascade]
+
+Ref: user_whitelist_access.product_id > products.id [delete: Cascade]
+
+Ref: premium_upgrades.order_id > orders.id [delete: Cascade]
+
+Ref: premium_upgrades.user_id > users.id [delete: Cascade]
+
+Ref: premium_upgrades.product_id > products.id [delete: Cascade]
+
+Ref: user_function_gifts.function_id > product_functions.id [delete: Cascade]
+
+Ref: user_function_gifts.gift_id > gifts.id
+
+Ref: user_function_gifts.order_id > orders.id [delete: Cascade]
+
+Ref: user_function_gifts.user_id > users.id [delete: Cascade]
+
+Ref: games.createdById > users.id [delete: Set Null]
+
+Ref: presets.gameId > games.id
+
+Ref: presets.createdById > users.id [delete: Set Null]
+
+Ref: user_presets.userId > users.id [delete: Cascade]
+
+Ref: user_presets.presetId > presets.id [delete: Cascade]
+
+Ref: app_rules.presetId > presets.id [delete: Cascade]
+
+Ref: announcements.createdById > users.id [delete: Set Null]

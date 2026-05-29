@@ -1,0 +1,83 @@
+import { UsersService } from './users.service';
+export declare class UsersController {
+    private readonly usersService;
+    constructor(usersService: UsersService);
+    getProfile(req: any): Promise<{
+        id: string;
+        email: string | null;
+        hwid: string | null;
+        username: string;
+        role: import("@prisma/client").$Enums.Role;
+        created_at: Date | null;
+        avatar: string | null;
+        lastSeen: Date | null;
+        isOnlineDesktop: boolean;
+        nativeStatus: string;
+        nativeExpiry: Date | null;
+    }>;
+    findAll(): Promise<{
+        id: string;
+        email: string | null;
+        hwid: string | null;
+        username: string;
+        role: import("@prisma/client").$Enums.Role;
+        created_at: Date | null;
+        avatar: string | null;
+        lastSeen: Date | null;
+        isOnlineDesktop: boolean;
+        nativeStatus: string;
+        nativeExpiry: Date | null;
+    }[]>;
+    findOne(id: string): Promise<{
+        id: string;
+        email: string | null;
+        hwid: string | null;
+        username: string;
+        role: import("@prisma/client").$Enums.Role;
+        created_at: Date | null;
+        avatar: string | null;
+        lastSeen: Date | null;
+        isOnlineDesktop: boolean;
+        nativeStatus: string;
+        nativeExpiry: Date | null;
+    }>;
+    update(id: string, data: any): Promise<{
+        id: string;
+        email: string | null;
+        hwid: string | null;
+        username: string;
+        role: import("@prisma/client").$Enums.Role;
+        created_at: Date | null;
+        avatar: string | null;
+        lastSeen: Date | null;
+        isOnlineDesktop: boolean;
+        nativeStatus: string;
+        nativeExpiry: Date | null;
+    }>;
+    resetHwid(id: string): Promise<{
+        id: string;
+        email: string | null;
+        hwid: string | null;
+        username: string;
+        role: import("@prisma/client").$Enums.Role;
+        created_at: Date | null;
+        avatar: string | null;
+        lastSeen: Date | null;
+        isOnlineDesktop: boolean;
+        nativeStatus: string;
+        nativeExpiry: Date | null;
+    }>;
+    remove(id: string): Promise<{
+        id: string;
+        email: string | null;
+        hwid: string | null;
+        username: string;
+        role: import("@prisma/client").$Enums.Role;
+        created_at: Date | null;
+        avatar: string | null;
+        lastSeen: Date | null;
+        isOnlineDesktop: boolean;
+        nativeStatus: string;
+        nativeExpiry: Date | null;
+    }>;
+}
