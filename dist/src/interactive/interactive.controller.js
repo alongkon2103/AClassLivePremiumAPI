@@ -39,6 +39,9 @@ let InteractiveController = class InteractiveController {
     async remove(req, id) {
         return this.userProductsService.remove(req.user.userId, id);
     }
+    async registerSession(req, body) {
+        return this.interactiveService.registerSession(req.user.userId, body.orderId, body.username);
+    }
 };
 exports.InteractiveController = InteractiveController;
 __decorate([
@@ -80,6 +83,14 @@ __decorate([
     __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", Promise)
 ], InteractiveController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Post)('register-session'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], InteractiveController.prototype, "registerSession", null);
 exports.InteractiveController = InteractiveController = __decorate([
     (0, common_1.Controller)('interactive'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

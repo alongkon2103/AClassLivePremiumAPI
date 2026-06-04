@@ -61,4 +61,33 @@ export declare class InteractiveService {
             created_by_id: string | null;
         })[];
     }>;
+    registerSession(userId: string, orderId: string, tiktokUsername: string): Promise<{
+        success: boolean;
+        data: {
+            id: string;
+            created_at: Date | null;
+            user_id: string;
+            expires_at: Date | null;
+            paid_at: Date | null;
+            status: string;
+            product_id: string;
+            stripe_session_id: string | null;
+            stripe_payment_intent: string | null;
+            amount: import("@prisma/client-runtime-utils").Decimal;
+            fulfilled_at: Date | null;
+            variant_id: string | null;
+            payment_method: string | null;
+            slip_image_url: string | null;
+            slip_verified: boolean | null;
+            trans_ref: string | null;
+            updated_at: Date | null;
+            whitelisted_username: string | null;
+            whitelist_status: string | null;
+            tiktok_username: string | null;
+            activated_device_id: string | null;
+            activated_at: Date | null;
+            is_premium_order: boolean | null;
+            order_type: string;
+        };
+    }>;
 }

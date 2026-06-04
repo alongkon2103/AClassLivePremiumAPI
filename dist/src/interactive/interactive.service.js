@@ -67,6 +67,23 @@ let InteractiveService = InteractiveService_1 = class InteractiveService {
             throw error;
         }
     }
+    async registerSession(userId, orderId, tiktokUsername) {
+        const order = await this.prisma.orders.findFirst({
+            where: {
+                id: orderId,
+                user_id: userId,
+                status: 'paid',
+            },
+        });
+        if (!order) {
+            throw new Error('Order not found or unauthorized');
+        }
+        const updated = await this.prisma.orders.update({
+            where: { id: orderId },
+            data: { tiktok_username: tiktokUsername },
+        });
+        return { success: true, data: updated };
+    }
 };
 exports.InteractiveService = InteractiveService;
 exports.InteractiveService = InteractiveService = InteractiveService_1 = __decorate([

@@ -9,7 +9,7 @@ export class InteractiveController {
   constructor(
     private readonly interactiveService: InteractiveService,
     private readonly userProductsService: UserProductsService,
-  ) {}
+  ) { }
 
   @Get('store-products')
   async getStoreProducts(@Req() req) {
@@ -34,5 +34,13 @@ export class InteractiveController {
   @Delete('my-products/:id')
   async remove(@Req() req, @Param('id') id: string) {
     return this.userProductsService.remove(req.user.userId, id);
+  }
+  @Post('register-session')
+  async registerSession(@Req() req, @Body() body: { orderId: string; username: string }) {
+    return this.interactiveService.registerSession(
+      req.user.userId,
+      body.orderId,
+      body.username,
+    );
   }
 }
