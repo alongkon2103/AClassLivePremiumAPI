@@ -9,6 +9,7 @@ export class InteractiveService {
 
   async getStoreProducts(userId: string) {
     try {
+      const now = new Date();
       const products = await this.prisma.products.findMany({
         where: {
           is_active: true,
@@ -16,6 +17,12 @@ export class InteractiveService {
             some: {
               user_id: userId,
               status: 'paid',
+              // Only count orders whose subscription is still active: either
+              // lifetime (expires_at is null) or expiry is in the future.
+              OR: [
+                { expires_at: null },
+                { expires_at: { gt: now } },
+              ],
             },
           },
         },

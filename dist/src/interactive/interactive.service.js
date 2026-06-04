@@ -21,6 +21,7 @@ let InteractiveService = InteractiveService_1 = class InteractiveService {
     }
     async getStoreProducts(userId) {
         try {
+            const now = new Date();
             const products = await this.prisma.products.findMany({
                 where: {
                     is_active: true,
@@ -28,6 +29,10 @@ let InteractiveService = InteractiveService_1 = class InteractiveService {
                         some: {
                             user_id: userId,
                             status: 'paid',
+                            OR: [
+                                { expires_at: null },
+                                { expires_at: { gt: now } },
+                            ],
                         },
                     },
                 },
