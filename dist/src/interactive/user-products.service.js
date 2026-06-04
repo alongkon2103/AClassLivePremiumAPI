@@ -49,43 +49,39 @@ let UserProductsService = class UserProductsService {
         });
     }
     async deploy(userId, data) {
-        const { slug } = data;
+        const productId = data?.productId;
+        const slug = data?.slug;
+        if (!productId && !slug) {
+            throw new common_1.BadRequestException('Either productId or slug is required');
+        }
         const product = await this.prisma.products.findUnique({
-            where: { slug },
-            include: { product_functions: true }
+            where: productId ? { id: productId } : { slug: slug },
+            include: { product_functions: true },
         });
         if (!product)
             throw new common_1.NotFoundException('Product not found in store');
-        let order = await this.prisma.orders.findFirst({
+        const order = await this.prisma.orders.findFirst({
             where: { user_id: userId, product_id: product.id, status: 'paid' }
         });
-        if (!order) {
+        if (!order)
             throw new common_1.NotFoundException('You must purchase this product first');
-        }
-        for (const fn of product.product_functions) {
-            if (fn.default_gift_id) {
-                await this.prisma.user_function_gifts.upsert({
-                    where: {
-                        user_id_order_id_function_id: {
-                            user_id: userId,
-                            order_id: order.id,
-                            function_id: fn.id,
-                        },
-                    },
-                    update: {
-                        gift_id: fn.default_gift_id,
-                        trigger_threshold: fn.default_trigger_threshold
-                    },
-                    create: {
-                        user_id: userId,
-                        order_id: order.id,
-                        function_id: fn.id,
-                        gift_id: fn.default_gift_id,
-                        trigger_threshold: fn.default_trigger_threshold
-                    },
-                });
-            }
-        }
+        await this.prisma.$transaction([
+            this.prisma.user_function_gifts.deleteMany({
+                where: { user_id: userId, order_id: order.id },
+            }),
+            this.prisma.user_function_gifts.createMany({
+                data: product.product_functions
+                    .filter(fn => fn.default_gift_id != null)
+                    .map(fn => ({
+                    user_id: userId,
+                    order_id: order.id,
+                    function_id: fn.id,
+                    gift_id: fn.default_gift_id,
+                    trigger_threshold: fn.default_trigger_threshold,
+                    is_enabled: true,
+                })),
+            }),
+        ]);
         return order;
     }
     async updateMapping(userId, orderId, mappings) {
@@ -94,31 +90,25 @@ let UserProductsService = class UserProductsService {
         });
         if (!order)
             throw new common_1.NotFoundException('Order not found');
-        for (const m of mappings) {
-            await this.prisma.user_function_gifts.upsert({
-                where: {
-                    user_id_order_id_function_id: {
-                        user_id: userId,
-                        order_id: orderId,
-                        function_id: m.functionId,
-                    },
-                },
-                update: {
-                    gift_id: m.giftId,
-                    trigger_threshold: m.triggerThreshold,
-                    is_enabled: m.isEnabled !== undefined ? m.isEnabled : true
-                },
-                create: {
-                    user_id: userId,
-                    order_id: orderId,
-                    function_id: m.functionId,
-                    gift_id: m.giftId,
-                    trigger_threshold: m.triggerThreshold,
-                    is_enabled: m.isEnabled !== undefined ? m.isEnabled : true
-                },
-            });
-        }
-        return { success: true };
+        const rows = (mappings || [])
+            .filter(m => m && m.functionId && m.giftId != null)
+            .map(m => ({
+            user_id: userId,
+            order_id: orderId,
+            function_id: m.functionId,
+            gift_id: Number(m.giftId),
+            trigger_threshold: m.triggerThreshold ?? null,
+            is_enabled: m.isEnabled !== undefined ? Boolean(m.isEnabled) : true,
+        }));
+        await this.prisma.$transaction([
+            this.prisma.user_function_gifts.deleteMany({
+                where: { user_id: userId, order_id: orderId },
+            }),
+            this.prisma.user_function_gifts.createMany({
+                data: rows,
+            }),
+        ]);
+        return { success: true, count: rows.length };
     }
     async remove(userId, orderId) {
         return this.prisma.orders.updateMany({

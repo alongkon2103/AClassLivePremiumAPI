@@ -39,6 +39,14 @@ let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(pas
         if (!token) {
             throw new common_1.UnauthorizedException('No token provided');
         }
+        if (this.configService.get('NODE_ENV') === 'development') {
+            return {
+                userId: payload.sub || payload.userId,
+                orderId: payload.orderId,
+                username: payload.username || payload.tiktokUsername,
+                role: payload.role,
+            };
+        }
         const cached = this.verificationCache.get(token);
         if (cached && cached.expiry > Date.now()) {
             return cached.result;

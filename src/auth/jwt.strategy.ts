@@ -30,6 +30,18 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException('No token provided');
     }
 
+    // Dev mode: passport already validated the signature with JWT_SECRET above.
+    // Skip the remote Store ping (the local user often doesn't exist in the
+    // cloud Store DB during dev, which would otherwise fail every request).
+    if (this.configService.get<string>('NODE_ENV') === 'development') {
+      return {
+        userId: payload.sub || payload.userId,
+        orderId: payload.orderId,
+        username: payload.username || payload.tiktokUsername,
+        role: payload.role,
+      };
+    }
+
     // Check Cache (1 minute) to avoid spamming the Store API
     const cached = this.verificationCache.get(token);
     if (cached && cached.expiry > Date.now()) {

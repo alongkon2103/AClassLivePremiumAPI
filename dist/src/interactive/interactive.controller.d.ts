@@ -192,6 +192,7 @@ export declare class InteractiveController {
     }>;
     updateMapping(req: any, id: string, mappings: any[]): Promise<{
         success: boolean;
+        count: number;
     }>;
     remove(req: any, id: string): Promise<import("@prisma/client").Prisma.BatchPayload>;
     registerSession(req: any, body: {

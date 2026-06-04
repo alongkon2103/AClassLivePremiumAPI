@@ -132,6 +132,7 @@ export declare class UserProductsService {
     }>;
     updateMapping(userId: string, orderId: string, mappings: any[]): Promise<{
         success: boolean;
+        count: number;
     }>;
     remove(userId: string, orderId: string): Promise<import("@prisma/client").Prisma.BatchPayload>;
 }
